@@ -24,11 +24,11 @@ public class FilmesController {
 	
 	
 	@RequestMapping(value = "/godzilla/{titulo}", method = RequestMethod.GET)
-	public ResponseEntity<Filme> find(@PathVariable String titulo) {
+	public ResponseEntity<Filme> findByTituloIgnoreCaseContaining(@PathVariable String titulo) {
 		
-		Filme obj = service.find(titulo);
+		Filme obj = service.findByTituloIgnoreCaseContaining(titulo);
 		 
-		if(obj.getEstoque() < 0 && obj!= null) {
+		if(obj.getEstoque() > 0 && obj!= null) {
 		return ResponseEntity.ok().body(obj);
 		}
 		return new ResponseEntity<>(null,new HttpHeaders(), HttpStatus.FORBIDDEN);

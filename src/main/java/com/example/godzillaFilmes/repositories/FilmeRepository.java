@@ -10,7 +10,7 @@ import com.example.godzillaFilmes.domain.Filme;
 @Repository
 public interface FilmeRepository extends JpaRepository<Filme, String>{
 
-	Filme findByTitulo(String titulo);
+	Filme findByTituloIgnoreCaseContaining(String titulo);
 	List<Filme> findByTituloContaining(String titulo);
 
 }

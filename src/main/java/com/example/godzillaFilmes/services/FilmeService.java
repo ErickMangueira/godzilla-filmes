@@ -14,8 +14,8 @@ public class FilmeService {
 	@Autowired
 	private FilmeRepository repo;
 
-	public Filme find(String titulo) {
-		Filme obj = repo.findByTitulo(titulo);
+	public Filme findByTituloIgnoreCaseContaining(String titulo) {
+		Filme obj = repo.findByTituloIgnoreCaseContaining(titulo);
 		return obj;
 
 	}
