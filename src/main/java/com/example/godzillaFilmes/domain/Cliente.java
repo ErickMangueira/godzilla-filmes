@@ -2,25 +2,28 @@ package com.example.godzillaFilmes.domain;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Cliente")
+@Table(name = "cliente")
 public class Cliente implements Serializable, UserDetails{
 	private static final long serialVersionUID = 1L;
 	
@@ -32,33 +35,20 @@ public class Cliente implements Serializable, UserDetails{
 	
 	private String email;
 	
-	@JsonIgnore
+	
 	private String password;
 	
+	@ManyToMany(fetch = FetchType.EAGER)
+	private Set<Perfil> perfis;
 	
 	
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return this.perfis;
 	}
+	
 	@Override
 	public String getUsername() {
 		return this.email;
@@ -79,6 +69,11 @@ public class Cliente implements Serializable, UserDetails{
 	public boolean isEnabled() {
 		return true;
 	}
+	@Override
+	public String getPassword() {
+		return this.password;
+	}
+	
 	
 	
 	
