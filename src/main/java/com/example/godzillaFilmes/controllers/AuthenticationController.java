@@ -1,41 +1,35 @@
 package com.example.godzillaFilmes.controllers;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.godzillaFilmes.services.TokenService;
+import com.example.godzillaFilmes.domain.Cliente;
+import com.example.godzillaFilmes.repositories.ClienteRepository;
 
 @RestController
-@RequestMapping("/cliente")
+@RequestMapping("/clientes")
 public class AuthenticationController {
 	
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
 	
-	@Autowired
-	private TokenService tokenService;
+	private final ClienteRepository repository;
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<TokenDTO> cliente(@RequestBody @Validated LoginDTO loginDTO){
-		
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
-		
-	    Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-		
-		String token = tokenService.generateToken(authentication);
-		
-		return ResponseEntity.ok(TokenDTO.builder().type("Bearer").token(token).build());
-		
+	
+	private final PasswordEncoder encoder;
+	
+	public AuthenticationController(ClienteRepository repository, PasswordEncoder encoder) {
+		this.repository = repository;
+		this.encoder = encoder;
+	}
+	
+	@PostMapping("/cliente")
+	public ResponseEntity<Cliente> cliente(@RequestBody  Cliente cliente){
+		cliente.setPassword(encoder.encode(cliente.getPassword()));
+		return ResponseEntity.ok(repository.save(cliente));
 	}
 
 }

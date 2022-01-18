@@ -9,24 +9,25 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.godzillaFilmes.domain.Cliente;
-import com.example.godzillaFilmes.repositories.ClienteRepositoryPort;
+import com.example.godzillaFilmes.domain.Perfil;
+import com.example.godzillaFilmes.repositories.ClienteRepository;
 
 @Service
 public class AuthenticationService implements UserDetailsService{
 	
 	@Autowired
-	private ClienteRepositoryPort repository;
+	private ClienteRepository repository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Cliente> optional = repository.findByEmail(username);
+		Optional<Cliente> cliente = repository.findByEmail(username);
 		
-		if(optional.isPresent()) {
+		if(cliente.isEmpty()) {
 			
-			return optional.get();
+			throw new UsernameNotFoundException("User not found");
 		}
 		
-		throw new UsernameNotFoundException("User not found");
+		return new Perfil(cliente);
 	}	
 
 }

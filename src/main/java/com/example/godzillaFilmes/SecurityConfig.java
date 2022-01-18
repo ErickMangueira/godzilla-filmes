@@ -11,12 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.example.godzillaFilmes.filters.JWTValidarFilter;
 import com.example.godzillaFilmes.filters.TokenAuthenticationFilter;
-import com.example.godzillaFilmes.repositories.ClienteRepositoryPort;
 import com.example.godzillaFilmes.services.AuthenticationService;
-import com.example.godzillaFilmes.services.TokenService;
+
 
 @Configuration
 @EnableWebSecurity
@@ -25,13 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AuthenticationService authenticationService;
 	
-	@Autowired
-	private TokenService tokenService;
-	
-	@Autowired
-	private ClienteRepositoryPort repository;
-	
-	
+		
 	@Override
     protected void configure(AuthenticationManagerBuilder cliente) throws Exception {
     	cliente.userDetailsService(authenticationService).passwordEncoder(new BCryptPasswordEncoder());
@@ -48,18 +44,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 
 	private static final String[] PUBLIC_MATCHERS_GET = { "/godzilla/**" };
+	private static final String[] PUBLIC_MATCHERS = {"/clientes/**"};
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
 		
+		http.csrf().disable();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-		.antMatchers(HttpMethod.POST, "/cliente").permitAll()
-		.anyRequest().authenticated().and().csrf().disable()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and().addFilterBefore(new TokenAuthenticationFilter(tokenService, repository), UsernamePasswordAuthenticationFilter.class);
+		.antMatchers(HttpMethod.POST,PUBLIC_MATCHERS).permitAll()
+		.anyRequest().authenticated().and()
+		.addFilter(new TokenAuthenticationFilter(authenticationManager()))
+		.addFilter(new JWTValidarFilter(authenticationManager()))
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
+	
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+		return source;
 	}
 
 	
-
 }
