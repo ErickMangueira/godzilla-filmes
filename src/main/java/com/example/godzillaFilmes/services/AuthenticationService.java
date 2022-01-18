@@ -2,7 +2,6 @@ package com.example.godzillaFilmes.services;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,12 +14,16 @@ import com.example.godzillaFilmes.repositories.ClienteRepository;
 @Service
 public class AuthenticationService implements UserDetailsService{
 	
-	@Autowired
-	private ClienteRepository repository;
+	
+	private final ClienteRepository repository;
+	
+	public AuthenticationService( ClienteRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Cliente> cliente = repository.findByEmail(username);
+		Optional<Cliente> cliente = repository.findByLogin(username);
 		
 		if(cliente.isEmpty()) {
 			
@@ -28,6 +31,8 @@ public class AuthenticationService implements UserDetailsService{
 		}
 		
 		return new Perfil(cliente);
-	}	
+	}
+	
 
+	
 }

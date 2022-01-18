@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "cliente")
+@Entity(name = "Cliente")
 public class Cliente {
 
 	
@@ -24,11 +24,13 @@ public class Cliente {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	 @Column(unique = true)
-	private String email;
+	@Column(unique = true)
+	private String login;
 	
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
+	
+	private String email;
 	
 	
 	}

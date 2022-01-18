@@ -18,6 +18,7 @@ public class AuthenticationController {
 	
 	private final ClienteRepository repository;
 	
+		
 	
 	private final PasswordEncoder encoder;
 	

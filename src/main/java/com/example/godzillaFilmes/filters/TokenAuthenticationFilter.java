@@ -45,7 +45,7 @@ public class TokenAuthenticationFilter extends UsernamePasswordAuthenticationFil
 	                    .readValue(request.getInputStream(), Cliente.class);
 
 	            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-	                    usuario.getEmail(),
+	                    usuario.getLogin(),
 	                    usuario.getPassword(),
 	                    new ArrayList<>()
 	            ));
